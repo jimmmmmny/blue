@@ -5,27 +5,26 @@ on:
     types: [opened, synchronize, closed]
     branches: [dev]
     paths:
-    - 'my-app/**'
+      - 'my-app/**'
 
 jobs:
   test:
     if: github.event.action == 'opened' || github.event.action == 'synchronize'
     runs-on: ubuntu-latest
     steps:
-    - name: checkout the code
-      uses: actions/checkout@v4
+      - name: checkout the code
+        uses: actions/checkout@v4
 
-    # Java 버전을 17로 설정합니다.
-    - name: Setup Java
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
+      # Java 버전을 17로 설정합니다.
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
 
-    - name: Build WAR file
-      run: |
-        cd my-app
-        # Assuming Maven is installed in the environment
-        mvn clean package
+      - name: Build WAR file
+        run: |
+          # Assuming Maven is installed in the environment
+          mvn clean package
 
   image-build:
     if: github.event.pull_request.merged == true
@@ -34,48 +33,81 @@ jobs:
       id-token: write
       contents: read
     steps:
-    - name: checkout the code
-      uses: actions/checkout@v4
-    - name: Configure AWS Credentials
-      id: credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: ${{ vars.AWS_REGION }}
-        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
-      with:
-        mask-password: 'true'
-    - name: docker build & push
-      run: |
-        docker build -f Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
-        docker push ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}
+      - name: checkout the code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        id: credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
+      - name: docker build & push
+        run: |
+          docker build -f Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
+          docker push ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [ image-build ]
+    needs: [image-build]
     permissions:
       id-token: write
       contents: read
     steps:
-    - name: checkout the code
-      uses: actions/checkout@v4
-    - name: Configure AWS Credentials
-      id: credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: ${{ vars.AWS_REGION }}
-        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      - name: checkout the code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        id: credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
 
-    # WAR 파일을 서버로 복사합니다. (VintageBlue.war로 변경)
-    - name: Deploy WAR file
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USERNAME }}
-        password: ${{ secrets.SERVER_PASSWORD }}
-        script: |
-          cd /path/to/tomcat/webapps
-          rm -rf ROOT*  # 이전 배포 파일 삭제
-          cp /path/to/your/project/my-app/target/VintageBlue.war ./ROOT.war  # VintageBlue.war 파일 복사
+      # WAR 파일을 서버로 복사합니다. (VintageBlue.war로 변경)
+      - name: Deploy WAR file
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd /path/to/tomcat/webapps
+            rm -rf ROOT*  # 이전 배포 파일 삭제
+            cp /path/to/.github/VintageBlue.war ./ROOT.war  # VintageBlue.war 파일 복사
+
+      # AWS EKS 클러스터에 배포합니다.
+      - name: access kubernetes
+        run: |
+          aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
+
+      - name: deploy
+        id: status
+        run: |
+          helm upgrade --install my-app kubernetes/my-app --create-namespace --namespace my-app-${{ vars.SUFFIX }} \
+          --set image.tag=${{ github.sha }} \
+          --set image.repository=${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}
+
+      - name: notify
+        if: always()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "message",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Environment : dev, Deploy Result : ${{ steps.status.outcome }}, Repository : ${{ github.repository }}."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
