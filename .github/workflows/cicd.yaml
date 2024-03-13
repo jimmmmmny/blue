@@ -36,7 +36,7 @@ jobs:
         mask-password: 'true'
     - name: Docker build & push
       run: |
-        docker build -f Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
+        docker build -f my-app/Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
         docker push ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}
   
   deploy:
