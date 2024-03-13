@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y vim && \
     tar xvfz tomcat.tar.gz -C /opt/tomcat --strip-components=1
 
 
-# vintageBlue.war 파일을 컨테이너 내의 특정 경로로 복사합니다.
+# vintageBlue.war 파일을 컨테이너 내의 특정 경로로 복사
 COPY VintageBlue.war /opt/tomcat/webapps/
 
 # Tomcat 사용자와 그룹을 생성합니다
