@@ -68,8 +68,7 @@ jobs:
     - name: Deploy
       id: status
       run: |
-        # WAR 파일을 Kubernetes 클러스터에 배포하는 명령어 실행
-        # 예를 들어, kubectl apply 등을 사용하여 배포
+    
     - name: Notify
       if: always()
       uses: slackapi/slack-github-action@v1.24.0
