@@ -67,11 +67,9 @@ jobs:
         aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
     - name: Deploy
       id: status
-      - name: Deploy to Kubernetes
       run: |
-        sed -i "s#placeholder_image_name#${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ steps.extract_tag.outputs.tag }}#" path/to/deployment.yaml
+        sed -i "s#placeholder_image_name#${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ steps.extract_tag.outputs.tag }}#" yaml/deployment.yaml
         kubectl apply -f yaml/deployment.yaml
-
     - name: Notify
       if: always()
       uses: slackapi/slack-github-action@v1.24.0
