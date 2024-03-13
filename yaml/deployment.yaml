@@ -15,7 +15,7 @@ spec:
         app: vintageblue-tc
     spec:
       containers:
-      - name: vintageblue-tc
-        image: placeholder_image_name
+      - name: vintageblue-tc 
+        image: image: 655237698429.dkr.ecr.ap-northeast-2.amazonaws.com/bluetest:${{ steps.extract_tag.outputs.tag }}
         ports:
         - containerPort: 8080
