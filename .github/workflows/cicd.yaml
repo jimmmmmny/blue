@@ -68,7 +68,7 @@ jobs:
     - name: Deploy
       id: status
       run: |
-        sed -i "s#placeholder_image_name#${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ steps.extract_tag.outputs.tag }}#" yaml/deployment.yaml
+        sed -i "s#image: .*#image: 655237698429.dkr.ecr.ap-northeast-2.amazonaws.com/bluetest:${{ steps.extract_tag.outputs.tag }}#" yaml/deployment.yaml
         kubectl apply -f yaml/deployment.yaml
     - name: Notify
       if: always()
