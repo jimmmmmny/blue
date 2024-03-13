@@ -36,7 +36,7 @@ jobs:
         mask-password: 'true'
     - name: Docker build & push
       run: |
-        docker build -f /path/to/Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
+        docker build -f my-app/Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
         docker push ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}
   
   deploy:
@@ -68,7 +68,9 @@ jobs:
     - name: Deploy
       id: status
       run: |
-    
+        helm upgrade --install blue kubernetes/my-app --create-namespace --namespace my-app-${{ vars.SUFFIX }} \
+        --set image.tag=${{ github.sha }} \
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}
     - name: Notify
       if: always()
       uses: slackapi/slack-github-action@v1.24.0
