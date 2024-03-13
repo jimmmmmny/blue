@@ -37,7 +37,6 @@ jobs:
     - name: Docker build & push
       run: |
         # WAR 파일을 Docker 이미지에 포함시켜 빌드하고 푸시하는 명령어 실행
-        # Dockerfile에서 WAR 파일을 알맞은 위치로 복사하고, 필요한 설정을 진행
         docker build -f /path/to/Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
         docker push ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}
   
