@@ -34,9 +34,6 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
       with:
         mask-password: 'true'
-    - name: Build WAR file
-      run: |
-        # WAR 파일을 빌드하는 명령어 실행 (예: Maven, Gradle 등)
     - name: Docker build & push
       run: |
         # WAR 파일을 Docker 이미지에 포함시켜 빌드하고 푸시하는 명령어 실행
