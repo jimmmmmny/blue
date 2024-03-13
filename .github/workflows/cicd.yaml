@@ -68,9 +68,8 @@ jobs:
     - name: Deploy
       id: status
       run: |
-        helm upgrade --install blue kubernetes/my-app --create-namespace --namespace my-app-${{ vars.SUFFIX }} \
-        --set image.tag=${{ github.sha }} \
-        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}
+        sed -i "s#placeholder_image_name#${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ steps.extract_tag.outputs.tag }}#" yaml/deployment.yaml
+        kubectl apply -f yaml/deployment.yaml
     - name: Notify
       if: always()
       uses: slackapi/slack-github-action@v1.24.0
