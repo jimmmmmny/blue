@@ -41,52 +41,54 @@ jobs:
   
   deploy:
     runs-on: ubuntu-latest
-    needs: [ image-build ]
+    needs: [image-build]
     permissions:
       id-token: write
       contents: read
     steps:
-    - name: checkout the code
-      uses: actions/checkout@v4
-    - name: Configure AWS Credentials
-      id: credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: ${{ vars.AWS_REGION }}
-        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-    - name: Setup kubectl
-      uses: azure/setup-kubectl@v3
-      with:
-        version: latest
-    - name: Setup Helm
-      uses: azure/setup-helm@v3
-      with:
-        version: v3.11.1
-    - name: Access Kubernetes
-      run: |
-        aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
-    - name: Deploy
-      id: status
-      run: |
-        sed -i "s#image: .*#image: 655237698429.dkr.ecr.ap-northeast-2.amazonaws.com/bluetest:${{ steps.extract_tag.outputs.tag }}#" yaml/deployment.yaml
-        kubectl apply -f yaml/deployment.yaml
-    - name: Notify
-      if: always()
-      uses: slackapi/slack-github-action@v1.24.0
-      with:
-        payload: |
-          {
-            "text": "message",
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "Environment: dev, Deploy Result: ${{ steps.status.outcome }}, Repository: ${{ github.repository }}."
+      - name: checkout the code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        id: credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: latest
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.11.1
+      - name: Access Kubernetes
+        run: |
+          aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
+      - name: Modify deployment.yaml
+        run: |
+          sed -i "s#image: .*#image: ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}#" yaml/deployment.yaml
+      - name: Deploy
+        id: status
+        run: |
+          kubectl apply -f yaml/deployment.yaml
+      - name: Notify
+        if: always()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "message",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Environment: dev, Deploy Result: ${{ steps.status.outcome }}, Repository: ${{ github.repository }}."
+                  }
                 }
-              }
-            ]
-          }
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
