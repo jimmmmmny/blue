@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - name: vintageblue-tc 
-        image: 655237698429.dkr.ecr.ap-northeast-2.amazonaws.com/bluetest:${{ steps.extract_tag.outputs.tag }}
+        image: "{{ secrets.REGISTRY }}/{{ vars.REPOSITORY }}:{{ steps.get_docker_tag.outputs.docker_tag }}"
         ports:
         - containerPort: 8080
+
