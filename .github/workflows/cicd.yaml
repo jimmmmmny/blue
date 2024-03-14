@@ -28,8 +28,6 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: ${{ vars.AWS_REGION }}
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
     - name: Login to Amazon ECR
       id: login-ecr
@@ -64,16 +62,14 @@ jobs:
         uses: azure/setup-helm@v3
         with:
           version: v3.11.1
-      - name: Access Kubernetes Cluster
+      - name: Access Kubernetes
         run: |
-          ssh -i key/jimmmmmny_key.pem ubuntu@10.10.11.196
-      
+          aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
       - name: Modify deployment.yaml
         run: |
-          cd yaml/deployment.yaml
-          sed -i "s#image: .*#image: ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}#" yaml/deployment.yaml
-      
-      - name: Apply Deployment
+          sed -i "s#image: .*#image: 655237698429.dkr.ecr.ap-northeast-2.amazonaws.com/bluetest:${{ steps.extract_tag.outputs.tag }}#" yaml/deployment.yaml
+      - name: Deploy
+        id: status
         run: |
           kubectl apply -f yaml/deployment.yaml
       - name: Notify
