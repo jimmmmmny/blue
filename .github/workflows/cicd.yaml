@@ -71,7 +71,7 @@ jobs:
       - name: Deploy
         id: status
         run: |
-          kubectl apply -f yaml/deployment.yaml --validate-false
+          kubectl apply -f yaml/deployment.yaml --validate=false
       - name: Notify
         if: always()
         uses: slackapi/slack-github-action@v1.24.0
