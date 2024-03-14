@@ -28,6 +28,8 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: ${{ vars.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
     - name: Login to Amazon ECR
       id: login-ecr
@@ -71,7 +73,11 @@ jobs:
       - name: Deploy
         id: status
         run: |
+<<<<<<< HEAD
           kubectl apply -f yaml/deployment.yaml
+=======
+          kubectl apply --validate=false -f yaml/deployment.yaml
+>>>>>>> cc1cc43a0d8902818a80666606134e45fa89ea0a
       - name: Notify
         if: always()
         uses: slackapi/slack-github-action@v1.24.0
@@ -92,3 +98,8 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> cc1cc43a0d8902818a80666606134e45fa89ea0a
