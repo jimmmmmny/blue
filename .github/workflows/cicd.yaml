@@ -67,7 +67,7 @@ jobs:
           aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
       - name: Modify deployment.yaml
         run: |
-          sed -i "s#image: .*#image: 655237698429.dkr.ecr.ap-northeast-2.amazonaws.com/bluetest:${{ steps.extract_tag.outputs.tag }}#" yaml/deployment.yaml
+          sed -i "s#image: .*#image: ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}#" yaml/deployment.yaml
       - name: Deploy
         id: status
         run: |
@@ -92,4 +92,5 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
 
