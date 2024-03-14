@@ -5,7 +5,7 @@ metadata:
   labels:
     app: vintageblue-tc
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: vintageblue-tc
@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: vintageblue-tc 
-        image: "{{ secrets.REGISTRY }}/{{ vars.REPOSITORY }}:{{ steps.get_docker_tag.outputs.docker_tag }}"
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         ports:
         - containerPort: 8080
