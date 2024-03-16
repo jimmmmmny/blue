@@ -73,7 +73,7 @@ jobs:
         aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
     - name: nginx deploy
       run: |
-        helm upgrade main-web kubernetes/nginx --install --create-namespace --namespace frontend \
+        helm upgrade --install main-web kubernetes/nginx --install --create-namespace --namespace frontend-${{ vars.SUFFIX }} \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }} \
         --set createNamespace=true \
@@ -81,7 +81,7 @@ jobs:
       continue-on-error: true
     - name: tomcat deploy
       run: |
-        helm upgrade main-was kubernetes/tomcat --install --create-namespace --namespace backend \
+        helm upgrade --install main-was kubernetes/tomcat --install --create-namespace --namespace backend-${{ vars.SUFFIX }} \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat \
         --set createNamespace=true \
