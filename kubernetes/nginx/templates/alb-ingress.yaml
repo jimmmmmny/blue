@@ -12,20 +12,6 @@ metadata:
   rules:
   - http:
       paths:
-      - path: /item/
-        pathType: Prefix
-        backend:
-          service:
-            name: item-svc
-            port:
-              number: 80
-      - path: /cart/
-        pathType: Prefix
-        backend:
-          service:
-            name: cart-svc
-            port:
-              number: 80
       - path: /
         pathType: Prefix
         backend:
