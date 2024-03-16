@@ -37,12 +37,12 @@ jobs:
     - name: Build and push nginx image
       run: |
         cd my-app/nginx
-        docker build -f dockerfile ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx:${{ github.sha }} .
+        docker build -f dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}:${{ github.sha }} .
         docker push ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx:${{ github.sha }}
     - name: Build and push tomcat image
       run: |
         cd my-app/tomcat
-        docker build -f dockerfile ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat:${{ github.sha }} .
+        docker build -f dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}:${{ github.sha }} .
         docker push ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat:${{ github.sha }}
   
   deploy:
@@ -73,12 +73,12 @@ jobs:
         aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
     - name: nginx deploy
       run: |
-        helm upgrade --install frontend kubernetes/nginx --create-namespace --namespace frontend \
+        helm upgrade --install main-web kubernetes/nginx --create-namespace --namespace frontend-${{ vars.SUFFIX }} \
         --set image.tag=${{ github.sha }} \
-        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}
     - name: tomcat deploy
       run: |
-        helm upgrade --install backend kubernetes/tomcat --create-namespace --namespace backend \
+        helm upgrade --install main-was kubernetes/tomcat --create-namespace --namespace backend-${{ vars.SUFFIX }} \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat
 
