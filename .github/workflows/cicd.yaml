@@ -37,12 +37,12 @@ jobs:
     - name: Build and push nginx image
       run: |
         cd my-app/nginx
-        docker build -t ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx:${{ github.sha }} .
+        docker build -f dockerfile ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx:${{ github.sha }} .
         docker push ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx:${{ github.sha }}
     - name: Build and push tomcat image
       run: |
         cd my-app/tomcat
-        docker build -t ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat:${{ github.sha }} .
+        docker build -f dockerfile ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat:${{ github.sha }} .
         docker push ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat:${{ github.sha }}
   
   deploy:
