@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: eks-ingress
+  namespace: frontend
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:655237698429:certificate/5ad26cbc-3af0-448c-97f6-376def0aaddc
+  ingressClassName: alb
+  rules:
+  - http:
+      paths:
+      - path: /item/
+        pathType: Prefix
+        backend:
+          service:
+            name: item-svc
+            port:
+              number: 80
+      - path: /cart/
+        pathType: Prefix
+        backend:
+          service:
+            name: cart-svc
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: main-svc
+            port:
+              number: 80

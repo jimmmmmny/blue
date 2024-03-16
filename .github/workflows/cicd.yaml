@@ -34,10 +34,16 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
       with:
         mask-password: 'true'
-    - name: docker build & push
+    - name: Build and push nginx image
       run: |
-        docker build -f Dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }} .
-        docker push ${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}:${{ github.sha }}
+        cd my-app/nginx
+        docker build -t ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx:${{ github.sha }}
+    - name: Build and push tomcat image
+      run: |
+        cd my-app/tomcat
+        docker build -t ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat:${{ github.sha }}
   
   deploy:
     runs-on: ubuntu-latest
@@ -65,30 +71,15 @@ jobs:
     - name: access kubernetes
       run: |
         aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
-    - name: deploy
-      id: status
+    - name: nginx deploy
       run: |
-        helm upgrade --install my-app kubernetes/my-app --create-namespace --namespace my-app-${{ vars.SUFFIX }} \
+        helm upgrade --install frontend kubernetes/nginx --create-namespace --namespace frontend \
         --set image.tag=${{ github.sha }} \
-        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.REPOSITORY }}
-    - name: notify
-      if: always()
-      uses: slackapi/slack-github-action@v1.24.0
-      with:
-        payload: |
-          {
-            "text": "message",
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "Environment : dev, Deploy Result : ${{ steps.status.outcome }}, Repository : ${{ github.repository }}."
-                }
-              }
-            ]
-          }
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx
+    - name: tomcat deploy
+      run: |
+        helm upgrade --install backend kubernetes/tomcat --create-namespace --namespace backend \
+        --set image.tag=${{ github.sha }} \
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat
+
   

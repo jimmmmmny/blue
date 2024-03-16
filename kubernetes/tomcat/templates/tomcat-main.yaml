@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-was
+  namespace: backend 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: main-was
+  template:
+    metadata:
+      labels:
+        app: main-was
+        version: v2
+    spec:
+      containers:
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        name: main-was
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: main-svc
+  namespace: backend
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: main-was
+  type: ClusterIP
+  clusterIP: 172.20.0.100
