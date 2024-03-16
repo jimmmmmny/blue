@@ -73,13 +73,13 @@ jobs:
         aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
     - name: nginx deploy
       run: |
-        helm upgrade --install main-web kubernetes/nginx --create-namespace --namespace frontend-${{ vars.SUFFIX }} \
+        helm upgrade --install main-web kubernetes/nginx --create-namespace --namespace frontend \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}
     - name: tomcat deploy
       run: |
-        helm upgrade --install main-was kubernetes/tomcat --create-namespace --namespace backend-${{ vars.SUFFIX }} \
+        helm upgrade --install main-was kubernetes/tomcat --create-namespace --namespace backend \
         --set image.tag=${{ github.sha }} \
-        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}
 
   
