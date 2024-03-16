@@ -38,12 +38,12 @@ jobs:
       run: |
         cd my-app/nginx
         docker build -f dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}:${{ github.sha }} .
-        docker push ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}/nginx:${{ github.sha }}
+        docker push ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}:${{ github.sha }}
     - name: Build and push tomcat image
       run: |
         cd my-app/tomcat
         docker build -f dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}:${{ github.sha }} .
-        docker push ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}/tomcat:${{ github.sha }}
+        docker push ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}:${{ github.sha }}
   
   deploy:
     runs-on: ubuntu-latest
