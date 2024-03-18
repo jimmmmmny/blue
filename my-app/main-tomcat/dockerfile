@@ -1,0 +1,17 @@
+FROM alpine:3.14 AS build
+
+RUN mkdir /opt/tomcat \
+    && wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.85/bin/apache-tomcat-9.0.85.tar.gz \
+    && tar -zxf apache-tomcat-9.0.85.tar.gz -C /opt/tomcat \
+    && chmod +x /opt/tomcat/apache-tomcat-9.0.85/bin/*.sh
+
+COPY lib/* /opt/tomcat/apache-tomcat-9.0.85/lib
+COPY conf/* /opt/tomcat/apache-tomcat-9.0.85/conf
+
+FROM openjdk:17-jdk-buster
+COPY --from=build /opt/tomcat /opt/tomcat
+COPY ROOT.war /opt/tomcat/apache-tomcat-9.0.85/webapps/
+RUN rm -rf /opt/tomcat/apache-tomcat-9.0.85/webapps/ROOT/
+
+EXPOSE 8080
+CMD ["/opt/tomcat/apache-tomcat-9.0.85/bin/catalina.sh", "run"]

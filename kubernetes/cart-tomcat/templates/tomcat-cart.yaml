@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-was
+  namespace: backend 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cart-was
+  template:
+    metadata:
+      labels:
+        app: cart-was
+    spec:
+      containers:
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        name: cart-was
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart-svc
+  namespace: backend
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: cart-was
+  type: ClusterIP
+  clusterIP: 172.20.0.210

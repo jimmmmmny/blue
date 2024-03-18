@@ -34,16 +34,37 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
       with:
         mask-password: 'true'
-    - name: Build and push nginx image
+    - name: Build and push main-nginx image
       run: |
-        cd my-app/nginx
-        docker build -f dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}:${{ github.sha }} .
-        docker push ${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}:${{ github.sha }}
-    - name: Build and push tomcat image
+        cd my-app/main-nginx
+        docker build -t ${{ secrets.REGISTRY }}/${{ vars.MAIN_NGINX_REPOSITORY }}:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.MAIN_NGINX_REPOSITORY }}:${{ github.sha }}
+    - name: Build and push main-tomcat image
       run: |
-        cd my-app/tomcat
-        docker build -f dockerfile --tag ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}:${{ github.sha }} .
-        docker push ${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}:${{ github.sha }}
+        cd my-app/main-tomcat
+        docker build -t ${{ secrets.REGISTRY }}/${{ vars.MAIN_TOMCAT_REPOSITORY }}:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.MAIN_TOMCAT_REPOSITORY }}:${{ github.sha }}
+    - name: Build and push item-nginx image
+      run: |
+        cd my-app/item-nginx
+        docker build -t ${{ secrets.REGISTRY }}/${{ vars.ITEM_NGINX_REPOSITORY }}:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.ITEM_NGINX_REPOSITORY }}:${{ github.sha }}
+    - name: Build and push item-tomcat image
+      run: |
+        cd my-app/item-tomcat
+        docker build -t ${{ secrets.REGISTRY }}/${{ vars.ITEM_TOMCAT_REPOSITORY }}:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.ITEM_TOMCAT_REPOSITORY }}:${{ github.sha }}
+    - name: Build and push cart-nginx image
+      run: |
+        cd my-app/cart-nginx
+        docker build -t ${{ secrets.REGISTRY }}/${{ vars.CART_NGINX_REPOSITORY }}:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.CART_NGINX_REPOSITORY }}:${{ github.sha }}
+    - name: Build and push cart-tomcat image
+      run: |
+        cd my-app/cart-tomcat
+        docker build -t ${{ secrets.REGISTRY }}/${{ vars.CART_TOMCAT_REPOSITORY }}:${{ github.sha }} .
+        docker push ${{ secrets.REGISTRY }}/${{ vars.CART_TOMCAT_REPOSITORY }}:${{ github.sha }}
+        
   
   deploy:
     runs-on: ubuntu-latest
@@ -71,15 +92,35 @@ jobs:
     - name: access kubernetes
       run: |
         aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
-    - name: nginx deploy
+    - name: main-nginx deploy
       run: |
-        helm upgrade --install main-web kubernetes/nginx --create-namespace --namespace frontend \
+        helm upgrade --install frontend kubernetes/main-nginx --create-namespace --namespace frontend \
         --set image.tag=${{ github.sha }} \
-        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.NGINX_REPOSITORY }}
-    - name: tomcat deploy
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.MAIN_NGINX_REPOSITORY }}
+    - name: main-tomcat deploy
       run: |
-        helm upgrade --install main-was kubernetes/tomcat --create-namespace --namespace backend \
+        helm upgrade --install backend kubernetes/main-tomcat --create-namespace --namespace backend \
         --set image.tag=${{ github.sha }} \
-        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.TOMCAT_REPOSITORY }}
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.MAIN_TOMCAT_REPOSITORY }}
+    - name: item-nginx deploy
+      run: |
+        helm upgrade --install frontend kubernetes/item-nginx --create-namespace --namespace frontend \
+        --set image.tag=${{ github.sha }} \
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.ITEM_NGINX_REPOSITORY }}
+    - name: item-tomcat deploy
+      run: |
+        helm upgrade --install backend kubernetes/item-tomcat --create-namespace --namespace backend \
+        --set image.tag=${{ github.sha }} \
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.ITEM_TOMCAT_REPOSITORY }}
+    - name: cart-nginx deploy
+      run: |
+        helm upgrade --install frontend kubernetes/cart-nginx --create-namespace --namespace frontend \
+        --set image.tag=${{ github.sha }} \
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.CART_NGINX_REPOSITORY }}
+    - name: cart-tomcat deploy
+      run: |
+        helm upgrade --install backend kubernetes/cart-tomcat --create-namespace --namespace backend \
+        --set image.tag=${{ github.sha }} \
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.CART_TOMCAT_REPOSITORY }}
 
   
