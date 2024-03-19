@@ -114,12 +114,12 @@ jobs:
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.ITEM_TOMCAT_REPOSITORY }}
     - name: cart-nginx deploy
       run: |
-        helm upgrade cart-web kubernetes/cart-nginx --create-namespace --namespace frontend \
+        helm upgrade --install cart-web kubernetes/cart-nginx --create-namespace --namespace frontend \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.CART_NGINX_REPOSITORY }}
     - name: cart-tomcat deploy
       run: |
-        helm upgrade cart-was kubernetes/cart-tomcat --create-namespace --namespace backend \
+        helm upgrade --install cart-was kubernetes/cart-tomcat --create-namespace --namespace backend \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.CART_TOMCAT_REPOSITORY }}
 
