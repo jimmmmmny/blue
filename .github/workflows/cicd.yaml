@@ -94,22 +94,22 @@ jobs:
         aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }}
     - name: main-nginx deploy
       run: |
-        helm upgrade main-web kubernetes/main-nginx --create-namespace --namespace frontend \
+        helm upgrade --install main-web kubernetes/main-nginx --create-namespace --namespace frontend \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.MAIN_NGINX_REPOSITORY }}
     - name: main-tomcat deploy
       run: |
-        helm upgrade main-was kubernetes/main-tomcat --create-namespace --namespace backend \
+        helm upgrade --install main-was kubernetes/main-tomcat --create-namespace --namespace backend \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.MAIN_TOMCAT_REPOSITORY }}
     - name: item-nginx deploy
       run: |
-        helm upgrade item-web kubernetes/item-nginx --create-namespace --namespace frontend \
+        helm upgrade --install item-web kubernetes/item-nginx --create-namespace --namespace frontend \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.ITEM_NGINX_REPOSITORY }}
     - name: item-tomcat deploy
       run: |
-        helm upgrade item-was kubernetes/item-tomcat --create-namespace --namespace backend \
+        helm upgrade --install item-was kubernetes/item-tomcat --create-namespace --namespace backend \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.ITEM_TOMCAT_REPOSITORY }}
     - name: cart-nginx deploy
