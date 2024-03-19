@@ -2,7 +2,6 @@ FROM nginx:1.25.3-alpine-slim
 
 ENV TZ=Asia/Seoul
 
-# nginx
 COPY cart /usr/share/nginx/html/cart
 COPY css /usr/share/nginx/html/css
 COPY js /usr/share/nginx/html/js
