@@ -65,7 +65,6 @@ jobs:
         docker build -t ${{ secrets.REGISTRY }}/${{ vars.CART_TOMCAT_REPOSITORY }}:${{ github.sha }} .
         docker push ${{ secrets.REGISTRY }}/${{ vars.CART_TOMCAT_REPOSITORY }}:${{ github.sha }}
         
-  
   deploy:
     runs-on: ubuntu-latest
     needs: [ image-build ]
@@ -122,9 +121,6 @@ jobs:
         helm upgrade --install cart-was kubernetes/cart-tomcat --create-namespace --namespace backend \
         --set image.tag=${{ github.sha }} \
         --set image.repository=${{ secrets.REGISTRY }}/${{ vars.CART_TOMCAT_REPOSITORY }}
-
-
-        
 
 
 
