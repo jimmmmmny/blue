@@ -120,10 +120,4 @@ jobs:
       run: |
         helm upgrade cart-was kubernetes/cart-tomcat --create-namespace --namespace backend \
         --set image.tag=${{ github.sha }} \
-        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.CART_TOMCAT_REPOSITORY }}
-
-
-
-        
-
-  
+        --set image.repository=${{ secrets.REGISTRY }}/${{ vars.CARST_TOMCAT_REPOSITORY }}
