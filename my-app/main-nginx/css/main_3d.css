@@ -1,0 +1,7 @@
+body{background: linear-gradient(-220deg, #0089ba, #0081cf, #2c73d2, #008e9b, #008f74);}
+#canvasWrap{position: fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);background: transparent;width: 1000px;height: 800px;z-index: 1;}        
+section{padding: 35vh 0 50vh;width: 600px;margin: 0 auto;text-align: center;}
+h1, h2{font-family: 'LeferiPoint-BlackObliqueA';color: #eee;}
+h1{margin-top: 80px;font-size: 50px;}
+h2{font-size: 36px;}
+article p{margin: 20px auto 0;font-family: 'LeferiPoint-WhiteObliqueA';font-size: 30px;color: #d4d4d4;}
