@@ -18,6 +18,10 @@
 
 ##### - 스킬 : java, jsp, html, css, javascript, GreenSock, Three.js
 
+*
+**
+***
+****
 ---
 ----
 -----
