@@ -16,9 +16,9 @@
  
 ##### - 디자인 : 일반 유저 화면, 관리자 화면
 
-##### - 스킬 : java, jsp, html, css, javascript, GreenSock, Three.js</br></br>
+##### - 스킬 : java, jsp, html, css, javascript, GreenSock, Three.js</br></br></br>
 
-## 개발 내용</br></br>
+## 개발 내용</br>
 
 ##### - 일반 유저 화면 : 회원 가입, 회원 삭제, 로그인, 메인, 상품 상세, 상품 주문, FAQ, OFFLINE GALLERY, 장바구니
 ##### - 관리자 화면 : 회원 관리, 상품 관리, 결제 관리</br></br>
