@@ -12,7 +12,7 @@
 
 ##### - aws 서버 환경 : EKS / ECR / ElastiCache Redis / RDS / EFS / Route 53 / CloudFront / WAF
 
-##### - 개발 툴 : eclipse
+##### - 개발 툴 : Eclipse IDE
  
 ##### - 디자인 : 일반 유저 화면, 관리자 화면
 
