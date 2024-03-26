@@ -4,7 +4,7 @@
 
 ##### - 웹소스주소 : https://github.com/jimmmmmny/blue.git
 
-##### - 개발자 : VintageBlue Team
+###### - 개발자 : VintageBlue Team
 
 ##### - 개발기간 :  25일 (2024년 02월 13일 ~ 2024년 03월 12일)
 
