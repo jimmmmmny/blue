@@ -19,7 +19,7 @@
 ##### - 스킬 : java, jsp, html, css, javascript, GreenSock, Three.js
 
 
-## < 개발 내용>
+## 개발 내용
 
 ##### - 일반 유저 화면 : 회원 가입 페이지, 회원 정보 수정 페이지, 로그인 화면, 장바구니, 메인 화면, 상품 목록, 상품 상세 보기, 장바구니,
 ##### - 상품 주문하기, FAQ, OFFLINE GALLERY, 회원 삭제 개발
