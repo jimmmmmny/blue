@@ -18,11 +18,11 @@
 
 ##### - 스킬 : java, jsp, html, css, javascript, GreenSock, Three.js</br></br>
 
-## 개발 내용</br>
+## 개발 내용</br></br>
 
 ##### - 일반 유저 화면 : 회원 가입 페이지, 회원 정보 수정 페이지, 로그인 화면, 장바구니, 메인 화면, 상품 목록, 상품 상세 보기, 장바구니,
 ##### - 상품 주문하기, FAQ, OFFLINE GALLERY, 회원 삭제 개발
-##### - 관리자화면 : 회원 관리, 상품 관리, 결제 관리
+##### - 관리자화면 : 회원 관리, 상품 관리, 결제 관리</br>
 
 ![스크린샷 2024-03-26 153041](https://github.com/jimmmmmny/blue/assets/154566560/0e32decb-0bb5-425c-8eaf-3fb7330c63a2)
 
