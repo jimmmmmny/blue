@@ -1,4 +1,4 @@
-# 💿 Vintage Blue
+# 📀 Vintage Blue
 
 #### 프로젝트 주제 : AWS EKS 활용한 하이브리드 3Tier 웹서비스 구축</br></br>
 
