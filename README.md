@@ -1,8 +1,6 @@
 # 💿 Vintage Blue
 
-#### 프로젝트주제 : 하이브리드를 통한 AWS EKS 활용한 3Tier 웹서비스구축
-
-
+#### 프로젝트주제 : 하이브리드를 통한 AWS EKS 활용한 3Tier 웹서비스구축  
 
 ##### - 웹소스주소 : https://github.com/jimmmmmny/blue.git
 
